@@ -13,43 +13,38 @@ def load_image(name, colorkey=None):
     return image
 
 
-class Bomb(pygame.sprite.Sprite):
-    image = load_image("bomb.png")
+class Gameover(pygame.sprite.Sprite):
+    image = load_image("gameover.png")
     def __init__(self, *group):
         super().__init__(*group)
-        self.image = Bomb.image
+        self.image = Gameover.image
         self.rect = self.image.get_rect()
-        self.rect.x = randrange(width)
-        self.rect.y = randrange(height)
+        self.rect.x = -600
+        self.rect.y = 0
 
     def update(self):
-        self.image = load_image("boom.png")
+        if self.rect.x != 0:
+            self.rect.x += 1
 
 pygame.init()
 all_sprites = pygame.sprite.Group()
 
-width = 450
-height = 449
-pygame.display.set_caption("Бомбочки 0.1")
-fullname = os.path.join('data', "bomb.png")
+
+pygame.display.set_caption("Gameover")
+fullname = os.path.join('data', "gameover.png")
 bomb_image = pygame.image.load(fullname)
-screen = pygame.display.set_mode((500, 500), pygame.RESIZABLE)
+screen = pygame.display.set_mode((600, 300), pygame.RESIZABLE)
 
-s = []
-for _ in range(20):
-    s.append(Bomb(all_sprites))
-
+Gameover(all_sprites)
 running = True
 while running:
-    screen.fill("white")
+    screen.fill("blue")
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
-        if event.type == pygame.MOUSEBUTTONDOWN:
-            for el in s:
-                if el.rect.collidepoint(event.pos):
-                    el.update()
     all_sprites.draw(screen)
+    all_sprites.update()
+    pygame.time.Clock().tick(200)
     pygame.display.update()
 pygame.quit()
 sys.exit()
