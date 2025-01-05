@@ -13,39 +13,31 @@ def load_image(name, colorkey=None):
     return image
 
 
-class Car(pygame.sprite.Sprite):
-    image = load_image("car.png")
+class Bomb(pygame.sprite.Sprite):
+    image = load_image("bomb.png")
     def __init__(self, *group):
         super().__init__(*group)
-        self.image = Car.image
+        self.image = Bomb.image
         self.rect = self.image.get_rect()
-        self.rect.x = 0
-        self.rect.y = 0
-        self.direction = 0
+        self.rect.x = randrange(width)
+        self.rect.y = randrange(height)
 
     def update(self):
-        if self.rect.x == 450 and self.direction == 0:
-            self.direction = 1
-            self.image = pygame.transform.flip(self.image, True, False)
-        elif self.rect.x == 0 and self.direction == 1:
-            self.direction = 0
-            self.image = pygame.transform.flip(self.image, True, False)
-        if not self.direction :
-            self.rect = self.rect.move(1, 0)
-            print(self.rect.x)
-        else: self.rect = self.rect.move(-1, 0)
+        self.image = load_image("boom.png")
 
 pygame.init()
 all_sprites = pygame.sprite.Group()
 
-width = 500
-height = 500
-Car(all_sprites)
+width = 450
+height = 449
 pygame.display.set_caption("Бомбочки 0.1")
-fullname = os.path.join('data', "car.png")
-car_image = pygame.image.load(fullname)
-screen = pygame.display.set_mode((600, 95), pygame.RESIZABLE)
+fullname = os.path.join('data', "bomb.png")
+bomb_image = pygame.image.load(fullname)
+screen = pygame.display.set_mode((500, 500), pygame.RESIZABLE)
 
+s = []
+for _ in range(20):
+    s.append(Bomb(all_sprites))
 
 running = True
 while running:
@@ -53,9 +45,11 @@ while running:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
+        if event.type == pygame.MOUSEBUTTONDOWN:
+            for el in s:
+                if el.rect.collidepoint(event.pos):
+                    el.update()
     all_sprites.draw(screen)
-    all_sprites.update()
     pygame.display.update()
-    pygame.time.Clock().tick(60)
 pygame.quit()
 sys.exit()
